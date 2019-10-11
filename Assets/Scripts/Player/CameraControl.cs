@@ -7,8 +7,13 @@ public class CameraControl : MonoBehaviour {
     [SerializeField] private float rotationSpeedX = 60;
     [SerializeField] private float rotationSpeedY = 60;
     [SerializeField] private Vector2 minMaxRotX = new Vector2(30,90);
+    [SerializeField] private Transform rig;
     [SerializeField] private Transform pivot;
     [SerializeField] private bool mouseRotation;
+    [SerializeField] private float minDistance = 1;
+    [SerializeField] private float maxDistance = 5;
+    [SerializeField] private float rigRadius = 0.02f;
+    [SerializeField] private LayerMask cameraCollMask;
 
     private Vector3 currentVelocity;
     private Camera cam;
@@ -38,8 +43,17 @@ public class CameraControl : MonoBehaviour {
         }
         // Submit rotation on pivot
         pivot.rotation = Quaternion.Euler(rotX, rotY, 0);
-        // Submit player position on pivot
-        if (target != null) pivot.position = target.position;
+        // Collision check
+        Vector3 direction = -pivot.forward;
+        Ray ray = new Ray(pivot.position + direction * minDistance, direction);
+        RaycastHit hit;
+        float hitDist = maxDistance;
+        if (Physics.Raycast(ray, out hit, maxDistance - minDistance, cameraCollMask)) {
+            hitDist = hit.distance + minDistance - rigRadius;
+        }
+        transform.localPosition = new Vector3(0, 0, -hitDist);
+        // Submit player position on rig
+        if (target != null) rig.position = target.position;
     }
 
     void LateUpdate() {

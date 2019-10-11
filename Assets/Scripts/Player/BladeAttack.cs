@@ -7,7 +7,15 @@ public class BladeAttack : MonoBehaviour {
     [SerializeField] private Character.EDamageKind damageKind;
     [SerializeField] private Character user;
     [SerializeField] GameObject collisionEffectPrefab;
-    public bool Active;
+    [SerializeField] TrailRenderer trail;
+    private bool active;
+    public bool Active {
+        get { return active; }
+        set {
+            trail.emitting = value;
+            active = value;
+        }
+    }
 
     private void OnTriggerEnter(Collider other) {
         if (!other.CompareTag(tag)) {
