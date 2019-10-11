@@ -44,12 +44,12 @@ public class PlayerControl : MonoBehaviour {
     }
 
     void Update() {
-        float horz = Input.GetAxisRaw("Horizontal");
-        float vert = Input.GetAxisRaw("Vertical");
-        bool attack = Input.GetButtonDown("Fire1");
-        bool grabThrow = Input.GetButtonUp("Fire2");
-        bool jump = Input.GetButton("Jump");
-        bool jumpStart = Input.GetButtonDown("Jump");
+        float horz = GameEvent.Waiting ? 0 : Input.GetAxisRaw("Horizontal");
+        float vert = GameEvent.Waiting ? 0 : Input.GetAxisRaw("Vertical");
+        bool attack = !GameEvent.Waiting && Input.GetButtonDown("Fire1");
+        bool grabThrow = !GameEvent.Waiting && Input.GetButtonUp("Fire2");
+        bool jump = !GameEvent.Waiting && Input.GetButton("Jump");
+        bool jumpStart = !GameEvent.Waiting && Input.GetButtonDown("Jump");
         // Move player
         Vector3 movement = new Vector3(horz, 0, vert).normalized;
         movement = Quaternion.Euler(0, cameraControl.RotationY, 0) * movement * moveSpeed;
@@ -60,8 +60,7 @@ public class PlayerControl : MonoBehaviour {
         }
         // Fall speed
         float zVelocity = Mathf.Clamp(rbody.velocity.y, -maxVerticalSpeed, maxVerticalSpeed);
-        // Jumping
-        RaycastHit hit;
+        // JUMPING
         // If it finds something below, then it's grounded (probably not gonna work, but let's assume it does for now :^D)
         // Physics.Raycast(transform.position, Vector3.down, out hit, 0.1f)
         bool cast = Physics.BoxCast(transform.position + Vector3.up * 0.1f, new Vector3(.15f, .025f, .15f), Vector3.down, transform.rotation, 0.1f);
