@@ -11,6 +11,7 @@ public class Grabbable : MonoBehaviour {
 
     public void SetKinematic(bool v) {
         rbody.isKinematic = v;
+        rbody.detectCollisions = !v;
     }
     public void AddForce(Vector3 force) {
         rbody.AddForce(force);

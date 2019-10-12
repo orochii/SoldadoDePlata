@@ -25,6 +25,7 @@ public class CameraControl : MonoBehaviour {
 
     void Start() {
         cam = Camera.main;
+        cam.tag = "Untagged";
         target = GameObject.FindGameObjectWithTag("Player").transform;
         cam.transform.position = transform.position;
         cam.transform.rotation = transform.rotation;
@@ -33,7 +34,7 @@ public class CameraControl : MonoBehaviour {
         rotY = ea.y;
     }
 
-    private void Update() {
+    private void LateUpdate() {
         if (mouseRotation) {
             float mouseX = Input.GetAxis("Mouse X");
             float mouseY = Input.GetAxis("Mouse Y");
@@ -53,10 +54,9 @@ public class CameraControl : MonoBehaviour {
         }
         transform.localPosition = new Vector3(0, 0, -hitDist);
         // Submit player position on rig
+        if (target == null) target = GameObject.FindGameObjectWithTag("Player").transform;
         if (target != null) rig.position = target.position;
-    }
-
-    void LateUpdate() {
+        // Submit movement onto camera object
         cam.transform.position = Vector3.SmoothDamp(cam.transform.position, transform.position, ref currentVelocity, smoothTime);
         cam.transform.rotation = transform.rotation;
     }

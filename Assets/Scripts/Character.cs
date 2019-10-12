@@ -4,13 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Character : MonoBehaviour {
+public class Character : MovingObject {
     public const float minHeight = -200f;
 
     public enum EDamageKind {
         NONE, PHYSICAL, MAGICAL
     }
-
     [SerializeField] private float maxHP = 100;
     [SerializeField] private float maxSP = 100;
     [SerializeField] private float physAttack = 1;
@@ -65,9 +64,7 @@ public class Character : MonoBehaviour {
         // Debug.Log(name + " receives " + damage);
         HP -= damage;
     }
-
-
-
+    
     public float GetAttack(EDamageKind damageKind) {
         switch (damageKind) {
             case EDamageKind.PHYSICAL:
@@ -90,9 +87,22 @@ public class Character : MonoBehaviour {
         }
     }
 
-    void Start() {
+    private void Awake() {
         currHP = maxHP;
         currSP = maxSP;
+    }
+    protected override void OnLoadData(MovingObject.State s) {
+        base.OnLoadData(s);
+        CharacterExtraData extra = (CharacterExtraData)s.extraData;
+        currHP = extra.currHP;
+        currSP = extra.currSP;
+        maxHP = extra.maxHP;
+        maxSP = extra.maxSP;
+        physAttack = extra.physAttack;
+        physDefense = extra.physDefense;
+        magiAttack = extra.magiAttack;
+        magiDefense = extra.magiDefense;
+        dead = extra.dead;
     }
 
     void Update() {
@@ -104,5 +114,34 @@ public class Character : MonoBehaviour {
 
     public void Die() {
         HP = 0;
+    }
+
+    [System.Serializable]
+    public class CharacterExtraData : StateExtraData {
+        public float currHP;
+        public float currSP;
+        public float maxHP;
+        public float maxSP;
+        public float physAttack;
+        public float physDefense;
+        public float magiAttack;
+        public float magiDefense;
+        public bool dead;
+        
+    }
+
+    protected override void OnCreateExtraData(State s) {
+        base.OnCreateExtraData(s);
+        CharacterExtraData extra = new CharacterExtraData();
+        extra.currHP = currHP;
+        extra.currSP = currSP;
+        extra.maxHP = maxHP;
+        extra.maxSP = maxSP;
+        extra.physAttack = physAttack;
+        extra.physDefense = physDefense;
+        extra.magiAttack = magiAttack;
+        extra.magiDefense = magiDefense;
+        extra.dead = dead;
+        s.extraData = extra;
     }
 }

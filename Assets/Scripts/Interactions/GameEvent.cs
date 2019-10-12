@@ -8,7 +8,7 @@ public class GameEvent : MonoBehaviour {
     public static bool Waiting { get { return waiting; } }
 
     public enum ECommand {
-        SHOWTEXT, WAIT, TELEPORT, LOOKAT, LOOKATPLAYER, RESETDIRECTION
+        SHOWTEXT, WAIT, TELEPORT, LOOKAT, LOOKATPLAYER, RESETDIRECTION, CALL, SAVE
     }
     [System.Serializable]
     public class EventCommand {
@@ -16,6 +16,7 @@ public class GameEvent : MonoBehaviour {
         public string text;
         public int num;
         public Vector3 position;
+        public UnityEngine.Events.UnityEvent callback;
     }
 
     [SerializeField] private EventCommand[] commands;
@@ -68,6 +69,12 @@ public class GameEvent : MonoBehaviour {
                     break;
                 case ECommand.RESETDIRECTION:
                     transform.rotation = Quaternion.Euler(0, startingDirection, 0);
+                    break;
+                case ECommand.CALL:
+                    if (ec.callback != null) ec.callback.Invoke();
+                    break;
+                case ECommand.SAVE:
+                    GameManager.Instance.Save("save");
                     break;
             }
             index++;

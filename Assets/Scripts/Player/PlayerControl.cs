@@ -133,6 +133,7 @@ public class PlayerControl : MonoBehaviour {
     }
 
     public void GoToLastGround() {
+        rbody.velocity = Vector3.zero;
         transform.position = lastGroundedPosition;
         animController.Flicker(0.25f, 8);
     }
