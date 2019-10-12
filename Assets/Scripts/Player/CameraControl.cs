@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraControl : MonoBehaviour {
-    [SerializeField] private float smoothTime = 0.25f;
     [SerializeField] private float rotationSpeedX = 60;
     [SerializeField] private float rotationSpeedY = 60;
     [SerializeField] private Vector2 minMaxRotX = new Vector2(30,90);
@@ -34,7 +33,7 @@ public class CameraControl : MonoBehaviour {
         rotY = ea.y;
     }
 
-    private void LateUpdate() {
+    private void FixedUpdate() {
         if (mouseRotation) {
             float mouseX = Input.GetAxis("Mouse X");
             float mouseY = Input.GetAxis("Mouse Y");
@@ -44,12 +43,17 @@ public class CameraControl : MonoBehaviour {
         }
         // Submit rotation on pivot
         pivot.rotation = Quaternion.Euler(rotX, rotY, 0);
+    }
+
+    private void LateUpdate() {
         // Collision check
         Vector3 direction = -pivot.forward;
         Ray ray = new Ray(pivot.position + direction * minDistance, direction);
         RaycastHit hit;
         float hitDist = maxDistance;
-        if (Physics.Raycast(ray, out hit, maxDistance - minDistance, cameraCollMask)) {
+        bool cast = Physics.BoxCast(ray.origin, Vector3.one * 0.1f, ray.direction, out hit, transform.rotation, maxDistance - minDistance, cameraCollMask);
+        // Physics.Raycast(ray, out hit, maxDistance - minDistance, cameraCollMask)
+        if (cast) {
             hitDist = hit.distance + minDistance - rigRadius;
         }
         transform.localPosition = new Vector3(0, 0, -hitDist);
@@ -57,7 +61,7 @@ public class CameraControl : MonoBehaviour {
         if (target == null) target = GameObject.FindGameObjectWithTag("Player").transform;
         if (target != null) rig.position = target.position;
         // Submit movement onto camera object
-        cam.transform.position = Vector3.SmoothDamp(cam.transform.position, transform.position, ref currentVelocity, smoothTime);
+        cam.transform.position = transform.position;
         cam.transform.rotation = transform.rotation;
     }
 }

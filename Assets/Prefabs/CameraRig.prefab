@@ -105,7 +105,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b4806b342e068e4ca0ce4772f562e07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  smoothTime: 0
   rotationSpeedX: 5
   rotationSpeedY: 5
   minMaxRotX: {x: -30, y: 90}
@@ -114,7 +113,7 @@ MonoBehaviour:
   mouseRotation: 1
   minDistance: 0.2
   maxDistance: 5
-  rigRadius: 0.2
+  rigRadius: 0.1
   cameraCollMask:
     serializedVersion: 2
     m_Bits: 512
