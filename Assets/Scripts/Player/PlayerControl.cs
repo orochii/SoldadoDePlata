@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerControl : MonoBehaviour {
     [SerializeField] private Animator charAnim;
@@ -14,12 +15,15 @@ public class PlayerControl : MonoBehaviour {
     [SerializeField] private float jumpSpeed = 6.5f;
     [SerializeField] private float endJumpSpeed = 4.5f;
     [SerializeField] private float jumpCooldown = 0.25f;
+    [SerializeField] private float maxSlope = 60f;
     [SerializeField] private AttackController animController;
-
+    
     private bool jumpPressed;
     private float attackTimer;
     private float jumpTimer;
     private Rigidbody rbody;
+    private CapsuleCollider capsule;
+    private PlayerGrab grab;
     private CameraControl cameraControl;
     private Vector3 lastGroundedPosition;
     // Animation hashes
@@ -33,6 +37,8 @@ public class PlayerControl : MonoBehaviour {
 
     void Awake() {
         rbody = GetComponent<Rigidbody>();
+        capsule = GetComponent<CapsuleCollider>();
+        grab = GetComponentInChildren<PlayerGrab>();
         hashFMoveSpeed = Animator.StringToHash("move_speed");
         hashTAttack = Animator.StringToHash("attack");
         hashTGrab = Animator.StringToHash("grab");
@@ -58,6 +64,8 @@ public class PlayerControl : MonoBehaviour {
             float angle = Vector3.SignedAngle(Vector3.forward, movement, Vector3.up);
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0, angle, 0), angleLerp);
         }
+        // Check slope in front
+        movement = CheckFront(movement);
         // Fall speed
         float zVelocity = Mathf.Clamp(rbody.velocity.y, -maxVerticalSpeed, maxVerticalSpeed);
         // JUMPING
@@ -81,8 +89,7 @@ public class PlayerControl : MonoBehaviour {
             if (!jump || jumpTimer < Time.time) {
                 jumpPressed = false;
                 if (!jump && zVelocity > endJumpSpeed) zVelocity = endJumpSpeed;
-            }
-            else zVelocity = jumpSpeed;
+            } else zVelocity = jumpSpeed;
         }
         movement.y = zVelocity;
         // Submit velocity change
@@ -93,7 +100,7 @@ public class PlayerControl : MonoBehaviour {
         charAnim.SetFloat(hashFAnimSpeed, 1 + v * 3);
         // EXECUTE ATTACK
         if (attackTimer < Time.time) {
-            if (attack) {
+            if (attack && !grab.IsGrabbing) {
                 Attack();
                 return;
             }
@@ -107,6 +114,21 @@ public class PlayerControl : MonoBehaviour {
         }
     }
 
+    private Vector3 CheckFront(Vector3 movement) {
+        // Spherecast to all looking for something in front
+        Vector3 origin = transform.position + capsule.center;
+        RaycastHit[] cHits = Physics.SphereCastAll(origin, capsule.radius, movement, 0.33f);
+        foreach (RaycastHit cHit in cHits) {
+            if (!cHit.collider.isTrigger && cHit.collider.attachedRigidbody != rbody) {
+                Vector3 n = cHit.normal;
+                n.y = 0;
+                movement += n * moveSpeed;
+                return movement;
+            }
+        }
+        return movement;
+    }
+    
     private void Attack() {
         charAnim.SetTrigger(hashTAttack);
         attackTimer = Time.time + attackCooldown;

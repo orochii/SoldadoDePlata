@@ -38,7 +38,7 @@ public class PlayerGrab : MonoBehaviour {
         objectInHand = toGrab;
         objectInHand.transform.SetParent(transform);
         objectDistance = Vector3.Distance(playerPivot.position, objectInHand.transform.position);
-        objectInHand.SetKinematic(true);
+        objectInHand.SetGrabbed(true);
         objectInHand.transform.localPosition = Vector3.zero;
         UpdatePosition();
     }
@@ -46,7 +46,7 @@ public class PlayerGrab : MonoBehaviour {
     public void Toss() {
         if (grabTimer > Time.time) return;
         objectInHand.transform.SetParent(null);
-        objectInHand.SetKinematic(false);
+        objectInHand.SetGrabbed(false);
         objectInHand.AddForce(playerPivot.forward * throwForce);
         objectInHand = null;
     }

@@ -16,13 +16,12 @@ public class GameManager : MonoBehaviour {
     public class GameState {
         public bool[] switches;
         public float[] variables;
-        public Dictionary<int, MovingObject.State> objectStates;
-        public Dictionary<int, Character.State> characterStates;
+        public Dictionary<float, MovingObject.State> objectStates;
 
         public GameState () {
             switches = new bool[SWITCHES_SIZE];
             variables = new float[VARIABLE_SIZE];
-            objectStates = new Dictionary<int, MovingObject.State>();
+            objectStates = new Dictionary<float, MovingObject.State>();
         }
     }
     private GameState state;
@@ -94,7 +93,7 @@ public class GameManager : MonoBehaviour {
     }
 
 
-    internal MovingObject.State GetObjData(int identifier) {
+    internal MovingObject.State GetObjData(float identifier) {
         if (state == null) return null;
         if (state.objectStates.ContainsKey(identifier)) return state.objectStates[identifier];
         return null;

@@ -11,7 +11,7 @@ public class MovingObject : MonoBehaviour {
     // Serializable state for moving objects
     [System.Serializable]
     public class State {
-        public int identifier;
+        public float identifier;
         public float positionX;
         public float positionY;
         public float positionZ;
@@ -42,9 +42,10 @@ public class MovingObject : MonoBehaviour {
         }
     }
     
-    [SerializeField] private int identifier = 0;
+    private float identifier = 0;
 
     void Start() {
+        identifier = transform.position.sqrMagnitude;
         State s = GameManager.Instance.GetObjData(identifier);
         if (s != null) {
             transform.position = s.position;

@@ -20,19 +20,17 @@ public class AnimatedText : MonoBehaviour {
     void OnEnable() {
         // Subscribe to event fired when text object has been regenerated.
         TMPro_EventManager.TEXT_CHANGED_EVENT.Add(OnTextChanged);
+        StartCoroutine(AnimateLetters());
     }
     void OnDisable() {
         TMPro_EventManager.TEXT_CHANGED_EVENT.Remove(OnTextChanged);
+        StopAllCoroutines();
     }
     void OnTextChanged(Object obj) {
         if (obj == _text)
             hasTextChanged = true;
     }
-
-    void Start() {
-        StartCoroutine(AnimateLetters());
-    }
-
+    
     private IEnumerator AnimateLetters() {
         _text.ForceMeshUpdate();
         TMP_TextInfo textInfo = _text.textInfo;
