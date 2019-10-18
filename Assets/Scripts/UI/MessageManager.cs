@@ -2,12 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class MessageManager : MonoBehaviour {
     private static MessageManager m_Instance;
     public static MessageManager Instance { get { return m_Instance; } }
 
-    [SerializeField] TMPro.TextMeshProUGUI messageText;
+    [SerializeField] TextMeshProUGUI messageText;
     [SerializeField] GameObject messageWindow;
     private bool finished;
     private int currentLetters;
@@ -33,7 +35,8 @@ public class MessageManager : MonoBehaviour {
         }
         if (currentLetters < currentText.Length) {
             currentLetters++;
-            messageText.SetText(currentText.Substring(0, currentLetters));
+            //messageText.text = currentText.Substring(0, currentLetters);
+            //messageText.SetText(currentText.UnicodeSafeSubstring(0, currentLetters));
         } else {
             waitTimer = Time.time + wait;
             finished = true;
@@ -50,6 +53,7 @@ public class MessageManager : MonoBehaviour {
 
     public void ShowText(string text, float _wait) {
         currentText = text;
+        messageText.SetText(text);
         currentLetters = 0;
         messageWindow.SetActive(true);
         wait = _wait;

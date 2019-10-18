@@ -21,7 +21,7 @@ TagManager:
   - Scenery
   - Grabbable
   - Moving
-  - 
+  - SceneryDontStore
   - 
   - 
   - 

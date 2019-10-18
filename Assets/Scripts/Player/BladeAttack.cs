@@ -8,17 +8,20 @@ public class BladeAttack : MonoBehaviour {
     [SerializeField] private Character user;
     [SerializeField] GameObject collisionEffectPrefab;
     [SerializeField] TrailRenderer trail;
+    [SerializeField] AudioSource bladeSource;
     private bool active;
     public bool Active {
         get { return active; }
         set {
             trail.emitting = value;
             active = value;
+            if (active == true) AudioManager.instance.PlaySoundFromSource(bladeSource, "whoosh");
         }
     }
 
     private void OnTriggerEnter(Collider other) {
         if (!other.CompareTag(tag)) {
+            Debug.Log(other.name);
             Character character = other.GetComponent<Character>();
             // Deal damage if the object has any character attached.
             if (character != null) {

@@ -8,9 +8,10 @@ public class MenuManager : MonoBehaviour {
         LoadingManager.Load("Main");
     }
     public void Load() {
-        if (GameManager.Instance.Load("save")) {
+        /*if (GameManager.Instance.Load("save")) {
             LoadingManager.Load("Main");
-        }
+        }*/
+        GameManager.Instance.saveMenu.Open(false);
     }
     public void Exit() {
         Application.Quit();

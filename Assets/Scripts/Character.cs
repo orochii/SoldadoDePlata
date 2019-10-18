@@ -16,6 +16,7 @@ public class Character : MovingObject {
     [SerializeField] private float physDefense = 1;
     [SerializeField] private float magiAttack = 1;
     [SerializeField] private float magiDefense = 1;
+    [SerializeField] UnityEvent onLoad;
     [SerializeField] UnityEvent onDead;
     [SerializeField] UnityEvent onRevive;
     [SerializeField] UnityEvent onFall;
@@ -35,6 +36,7 @@ public class Character : MovingObject {
                 if (value) {
                     if (onDead != null) onDead.Invoke();
                 } else {
+                    if (currHP <= 0) currHP = 1;
                     if (onRevive != null) onRevive.Invoke();
                 }
             }
@@ -103,6 +105,7 @@ public class Character : MovingObject {
         magiAttack = extra.magiAttack;
         magiDefense = extra.magiDefense;
         dead = extra.dead;
+        if (onLoad != null) onLoad.Invoke();
     }
 
     void Update() {
@@ -116,6 +119,10 @@ public class Character : MovingObject {
         HP = 0;
     }
 
+    public void Revive() {
+        Dead = false;
+        currHP = maxHP;
+    }
     [System.Serializable]
     public class CharacterExtraData : StateExtraData {
         public float currHP;
@@ -144,4 +151,5 @@ public class Character : MovingObject {
         extra.dead = dead;
         s.extraData = extra;
     }
+
 }

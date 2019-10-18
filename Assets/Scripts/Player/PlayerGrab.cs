@@ -37,7 +37,7 @@ public class PlayerGrab : MonoBehaviour {
         if (grabTimer > Time.time) return;
         objectInHand = toGrab;
         objectInHand.transform.SetParent(transform);
-        objectDistance = Vector3.Distance(playerPivot.position, objectInHand.transform.position);
+        objectDistance = toGrab.Radius; //Vector3.Distance(playerPivot.position, objectInHand.transform.position);
         objectInHand.SetGrabbed(true);
         objectInHand.transform.localPosition = Vector3.zero;
         UpdatePosition();

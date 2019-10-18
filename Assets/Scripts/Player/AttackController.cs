@@ -9,6 +9,7 @@ public class AttackController : MonoBehaviour {
     [SerializeField] private Vector3 grabSize;
     [SerializeField] private LayerMask grabbableMask;
     [SerializeField] private ParticleSystem[] feetParticles;
+    [SerializeField] private AudioSource footsteps;
 
     private Animator anim;
     private int hashBGrabbing;
@@ -76,6 +77,7 @@ public class AttackController : MonoBehaviour {
 
     public void EmitSoilParticles(int idx) {
         feetParticles[idx].Emit(30);
+        AudioManager.instance.PlaySoundFromSource(footsteps, "steps");
     }
 
     private void OnDrawGizmosSelected() {

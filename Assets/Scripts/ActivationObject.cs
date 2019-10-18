@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ActivationObject : MovingObject {
     [System.Serializable]
@@ -28,12 +29,15 @@ public class ActivationObject : MovingObject {
     [SerializeField] private float rotateSpeed;
     [SerializeField] private MovementData[] movementData; 
     [SerializeField] private bool looping;
+    [SerializeField] private UnityEvent onActiveChange;
+    [SerializeField] private AudioSource movingSoundSource;
     private bool waiting;
     private float waitTimer;
     private int positionIndex;
     private Vector3 deactivatedPosition;
     private Quaternion deactivatedRotation;
     private Coroutine activationCoroutine;
+    public bool Active { get { return active; } }
 
     private void OnDrawGizmosSelected() {
         if (movementData == null) return;
@@ -57,7 +61,7 @@ public class ActivationObject : MovingObject {
         base.OnLoadData(s);
         ActivationExtraData aed = (ActivationExtraData)s.extraData;
         active = aed.active;
-        positionIndex = aed.index;
+        positionIndex = aed.index % movementData.Length;
         if (active) {
             if (kind == EActivationKind.POS || kind == EActivationKind.BOTH) {
                 transform.position = movementData[positionIndex].targetPosition;
@@ -76,7 +80,13 @@ public class ActivationObject : MovingObject {
             if (waitTimer < Time.time) {
                 // Advance index
                 positionIndex++;
-                if (looping && positionIndex >= movementData.Length) positionIndex = 0;
+                if (positionIndex >= movementData.Length) {
+                    if (looping) positionIndex = 0;
+                    else {
+                        waiting = false;
+                        return;
+                    }
+                }
                 Vector3 p = transform.position;
                 Quaternion r = transform.rotation;
                 if (kind == EActivationKind.POS || kind == EActivationKind.BOTH) {
@@ -90,6 +100,10 @@ public class ActivationObject : MovingObject {
                 waiting = false;
             }
         }
+    }
+
+    public void ToggleActive() {
+        SetActive(!active);
     }
 
     public void SetActive(bool a) {
@@ -106,15 +120,19 @@ public class ActivationObject : MovingObject {
         if (!active) positionIndex = 0;
         if (activationCoroutine != null) StopCoroutine(activationCoroutine);
         activationCoroutine = StartCoroutine(GoTowardsDestination(p,r));
+        // Send activation message
+        if (onActiveChange != null) onActiveChange.Invoke();
     }
     public IEnumerator GoTowardsDestination(Vector3 position, Quaternion rotation, bool next=false) {
         float moveSpeedF = moveSpeed * Time.fixedDeltaTime;
         float rotateSpeedF = rotateSpeed * Time.fixedDeltaTime;
+        if (movingSoundSource != null) movingSoundSource.Play();
         while (position != transform.position || rotation != transform.rotation) {
             transform.position = Vector3.MoveTowards(transform.position, position, moveSpeedF);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, rotateSpeedF);
             yield return new WaitForSeconds(Time.fixedDeltaTime);
         }
+        if (movingSoundSource != null) movingSoundSource.Stop();
         waiting = true;
         waitTimer = Time.time + movementData[positionIndex].waitTime;
     }

@@ -43,6 +43,8 @@ public class MovingObject : MonoBehaviour {
     }
     
     private float identifier = 0;
+    [SerializeField] private string collideScenerySound = "thump";
+    [SerializeField] private AudioSource selfAudioSource;
 
     void Start() {
         identifier = transform.position.sqrMagnitude;
@@ -69,4 +71,11 @@ public class MovingObject : MonoBehaviour {
     protected virtual void OnCreateExtraData(State s) {
 
     }
+
+    private void OnCollisionEnter(Collision collision) {
+        //if (collision.collider.gameObject.layer == 9) {
+            if (selfAudioSource != null) AudioManager.instance.PlaySoundFromSource(selfAudioSource, collideScenerySound);
+        //}
+    }
+
 }

@@ -43,3 +43,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f95f4b6705e43e5419f471ae92122e5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slideAsButter: {fileID: 13400000, guid: 89ce76c9d0c4f644ba0fa4d9f960c6f6, type: 2}

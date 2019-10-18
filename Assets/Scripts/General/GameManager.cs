@@ -11,12 +11,36 @@ public class GameManager : MonoBehaviour {
     
     private static GameManager m_Instance;
     public static GameManager Instance { get { return m_Instance; } }
+    
+    public static bool GetSwitch(int id) {
+        if (m_Instance == null) return false;
+        if (m_Instance.state == null) return false;
+        return m_Instance.state.switches[id];
+    }
+    public static void SetSwitch(int id, bool v) {
+        if (m_Instance == null) return;
+        if (m_Instance.state == null) return;
+        m_Instance.state.switches[id] = v;
+    }
+
+    public static float GetVariable(int id) {
+        if (m_Instance == null) return 0;
+        if (m_Instance.state == null) return 0;
+        return m_Instance.state.variables[id];
+    }
+
+    public static void SetVariable(int id, float v) {
+        if (m_Instance == null) return;
+        if (m_Instance.state == null) return;
+        m_Instance.state.variables[id] = v;
+    }
 
     [System.Serializable]
     public class GameState {
         public bool[] switches;
         public float[] variables;
         public Dictionary<float, MovingObject.State> objectStates;
+        public string lastScene = "Main";
 
         public GameState () {
             switches = new bool[SWITCHES_SIZE];
@@ -24,7 +48,13 @@ public class GameManager : MonoBehaviour {
             objectStates = new Dictionary<float, MovingObject.State>();
         }
     }
-    private GameState state;
+    public PhysicMaterial slideAsButter;
+    public string lastSaveSlot = "save";
+    public string lastSceneName = "Main";
+    public Vector3 respawnPosition;
+    public SaveList saveMenu;
+
+    [SerializeField] private GameState state;
 
     void Awake() {
         if (m_Instance != null) {
@@ -41,6 +71,10 @@ public class GameManager : MonoBehaviour {
         state = new GameState();
     }
 
+    public void SaveOnLastSlot() {
+        Save(lastSaveSlot);
+    }
+
     public void Save(string filename) {
         // Create save folder if necessary.
         CheckSaveFolder();
@@ -52,6 +86,8 @@ public class GameManager : MonoBehaviour {
             MovingObject.State os = o.CreateState();
             state.objectStates.Add(os.identifier, os);
         }
+        // Remember last scene name.
+        state.lastScene = lastSceneName;
         // Save data to disk
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(SaveFilename(filename));
@@ -68,6 +104,7 @@ public class GameManager : MonoBehaviour {
             FileStream file = File.Open(SaveFilename(filename), FileMode.Open);
             // Load data
             state = (GameState)bf.Deserialize(file);
+            lastSceneName = state.lastScene;
             file.Close();
             return true;
         }

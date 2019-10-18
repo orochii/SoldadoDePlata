@@ -14,6 +14,10 @@ public class CameraControl : MonoBehaviour {
     [SerializeField] private float rigRadius = 0.02f;
     [SerializeField] private LayerMask cameraCollMask;
 
+    private Transform customTarget;
+    public void SetCustomTarget(Transform ct) {
+        customTarget = ct;
+    }
     private Vector3 currentVelocity;
     private Camera cam;
     private Transform target;
@@ -21,6 +25,7 @@ public class CameraControl : MonoBehaviour {
     private float rotX;
     private float rotY;
     public float RotationY { get { return rotY; } }
+    public Quaternion Rotation { get { return transform.rotation; } }
 
     void Start() {
         cam = Camera.main;
@@ -34,9 +39,10 @@ public class CameraControl : MonoBehaviour {
     }
 
     private void FixedUpdate() {
+        if (customTarget != null) return;
         if (mouseRotation) {
-            float mouseX = Input.GetAxis("Mouse X");
-            float mouseY = Input.GetAxis("Mouse Y");
+            float mouseX = Input.GetAxis("Mouse X") * InputManager.MouseSensitivity;
+            float mouseY = Input.GetAxis("Mouse Y") * InputManager.MouseSensitivity;
             // Calculate new values for view rotation
             rotX = Mathf.Clamp(rotX + mouseY * rotationSpeedX, minMaxRotX.x, minMaxRotX.y);
             rotY += mouseX * rotationSpeedY;
@@ -46,6 +52,11 @@ public class CameraControl : MonoBehaviour {
     }
 
     private void LateUpdate() {
+        if (customTarget != null) {
+            cam.transform.position = customTarget.position;
+            cam.transform.rotation = customTarget.rotation;
+            return;
+        }
         // Collision check
         Vector3 direction = -pivot.forward;
         Ray ray = new Ray(pivot.position + direction * minDistance, direction);
