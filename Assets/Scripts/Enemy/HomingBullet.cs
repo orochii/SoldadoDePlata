@@ -9,6 +9,7 @@ public class HomingBullet : MonoBehaviour {
     [SerializeField] float rotationSpeed = 5;
     [SerializeField] float baseDamage = 10;
     [SerializeField] float maxLife = 10;
+    [SerializeField] ParticleSystem collisionEffectPrefab;
     private Character parent;
     private Transform target;
 
@@ -51,6 +52,16 @@ public class HomingBullet : MonoBehaviour {
             if (otherChar != null) {
                 float dmg = baseDamage + parent.GetAttack(Character.EDamageKind.MAGICAL) * 4;
                 otherChar.Damage(dmg, Character.EDamageKind.MAGICAL);
+            }
+            // Create effect
+            if (collisionEffectPrefab != null) {
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position, transform.forward, out hit)) {
+                    //hit.point;
+                    ParticleSystem ps = Instantiate(collisionEffectPrefab, hit.point, transform.rotation);
+                    float d = ps.main.duration + 2; //ps.main.startLifetime.Evaluate(1);
+                    Destroy(ps.gameObject, d);
+                }
             }
         }
         Destroy(gameObject);

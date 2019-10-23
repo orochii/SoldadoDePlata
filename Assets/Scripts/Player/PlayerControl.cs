@@ -112,7 +112,6 @@ public class PlayerControl : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        //if (selfChar.Dead || selfChar.Busy) return;
         // AUTORECOVER
         if (GameManager.GetSwitch(1)) {
             if (!selfChar.Dead) selfChar.HP += 1f * Time.deltaTime;
@@ -153,11 +152,12 @@ public class PlayerControl : MonoBehaviour {
         // If it finds something below, then it's grounded (probably not gonna work, but let's assume it does for now :^D)
         // Physics.Raycast(transform.position, Vector3.down, out hit, 0.1f)
         RaycastHit hit;
-        bool cast = Physics.BoxCast(transform.position + Vector3.up * 0.1f, new Vector3(.15f, .025f, .15f), Vector3.down, out hit, transform.rotation, 0.1f);
+        bool cast = Physics.BoxCast(transform.position + Vector3.up * 0.25f, new Vector3(.25f, .03f, .25f), Vector3.down, out hit, transform.rotation, 0.35f);
         if (cast) coyoteTimer = Time.time + coyoteTime;
         if (zVelocity <= 0.005f && (coyoteTimer > Time.time)) {
             if (cast && IsInLayerMask(hit.collider.gameObject.layer)) {
-                lastGroundedPosition = transform.position;
+                float normalAngle = Vector3.Angle(Vector3.up, hit.normal);
+                if (normalAngle < 40) lastGroundedPosition = transform.position;
             }
             if (jumpStart) {
                 zVelocity = jumpSpeed;
@@ -235,12 +235,16 @@ public class PlayerControl : MonoBehaviour {
     private IEnumerator DoRespawn() {
         if (cameraControl != null) cameraControl.gameObject.SetActive(false);
         if (selfChar != null) selfChar.Busy = true;
+        charAnim.Play("Death");
         yield return new WaitForSeconds(5f);
         GoToRespawn();
         selfChar.Revive();
+        charAnim.SetTrigger("endAnimation");
         if (cameraControl != null) cameraControl.gameObject.SetActive(true);
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(1f);
         if (selfChar != null) selfChar.Busy = false;
+        GameManager.SetSwitch(4, true);
+        GameEvent.CheckAllPages();
     }
 
     public void GoToRespawn() {

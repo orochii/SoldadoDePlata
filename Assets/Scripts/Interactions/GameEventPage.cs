@@ -5,15 +5,17 @@ using UnityEngine;
 
 public class GameEventPage : MonoBehaviour {
     public enum ECommand {
-        SHOWTEXT, WAIT, TELEPORT, LOOKAT, LOOKATPLAYER, RESETDIRECTION, CALL, SAVE, SETSWITCH, PLAYSOUND
+        SHOWTEXT, WAIT, TELEPORT, LOOKAT, LOOKATPLAYER, RESETDIRECTION, CALL, SAVE, SETSWITCH, PLAYSOUND, SETLOCALPOS, CHECKIF
     }
     [System.Serializable]
     public class EventCommand {
+        public string desc;
         public ECommand kind;
         public string text;
         public int num;
         public int num2;
         public Vector3 position;
+        public Transform transform;
         public UnityEngine.Events.UnityEvent callback;
     }
 
@@ -22,6 +24,7 @@ public class GameEventPage : MonoBehaviour {
     [SerializeField] private Transform graphics;
     private bool closeToPlayer;
     private float startingDirection;
+    [SerializeField] private bool saveOpen;
 
     private void Awake() {
         startingDirection = transform.rotation.eulerAngles.y;
@@ -50,6 +53,7 @@ public class GameEventPage : MonoBehaviour {
     }
 
     private void StartEvent() {
+        if (saveOpen && LoadingManager.IsLoading) return;
         StopAllCoroutines();
         StartCoroutine(ProcessEvent());
     }
@@ -93,6 +97,7 @@ public class GameEventPage : MonoBehaviour {
                     break;
                 case ECommand.SAVE:
                     if (player != null) GameManager.Instance.respawnPosition = player.transform.position;
+                    saveOpen = true;
                     GameManager.Instance.saveMenu.Open(true);
                     break;
                 case ECommand.SETSWITCH:
@@ -101,7 +106,19 @@ public class GameEventPage : MonoBehaviour {
                 case ECommand.PLAYSOUND:
                     Vector3 playPos = transform.position;
                     if (ec.num2 > 0) playPos = ec.position;
+                    if (ec.transform != null) playPos = ec.transform.position;
                     AudioManager.instance.PlaySound(ec.text, playPos, ec.num);
+                    break;
+                case ECommand.SETLOCALPOS:
+                    ec.transform.localPosition = ec.position;
+                    break;
+                case ECommand.CHECKIF:
+                    bool checkVal = (ec.text.Length > 2);
+                    Debug.Log(checkVal);
+                    if (GameManager.GetSwitch(ec.num) != checkVal) {
+                        // Skip a couple of things if switch condition isn't met
+                        index += ec.num2;
+                    }
                     break;
             }
             index++;

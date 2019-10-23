@@ -4765,8 +4765,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.05, y: 0.05, z: 0.05}
-  m_Center: {x: -0.025, y: 0, z: 0}
+  m_Size: {x: 0.08, y: 0.05, z: 0.05}
+  m_Center: {x: -0.04, y: 0, z: 0}
 --- !u!82 &240721261828539833
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4878,7 +4878,11 @@ MonoBehaviour:
   baseDamage: 30
   damageKind: 1
   user: {fileID: 5340886739023525532}
-  collisionEffectPrefab: {fileID: 0}
+  collisionEffectPrefabs:
+  - {fileID: 5829480030163850111, guid: d31e1dc1a62f2b94b8af7b7836026e53, type: 3}
+  - {fileID: 5829480030163850111, guid: 5ef62b902574e0340baaa45d37fa7edd, type: 3}
+  - {fileID: 0}
+  - {fileID: 5829480030163850111, guid: d31e1dc1a62f2b94b8af7b7836026e53, type: 3}
   trail: {fileID: 5340886740560161957}
   bladeSource: {fileID: 240721261828539833}
 --- !u!114 &5340886739734370559
@@ -4917,6 +4921,7 @@ GameObject:
   - component: {fileID: 5340886739023525538}
   - component: {fileID: 5340886739023525533}
   - component: {fileID: 5340886739023525532}
+  - component: {fileID: 4685845258893335360}
   m_Layer: 11
   m_Name: Player
   m_TagString: Player
@@ -4995,7 +5000,7 @@ MonoBehaviour:
   jumpSpeed: 6.5
   endJumpSpeed: 4.5
   jumpCooldown: 0.25
-  coyoteTime: 0.1
+  coyoteTime: 0.2
   maxSlope: 60
   animController: {fileID: 5340886739734370559}
   godSpeedEffect: {fileID: 1102988783}
@@ -5075,10 +5080,27 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  damageParticlePrefab: {fileID: 0}
   currHP: 0
   currSP: 0
   dead: 0
   Busy: 0
+--- !u!208 &4685845258893335360
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5340886739023525537}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.5, y: 0.6, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0.5, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &5340886739103531776
 GameObject:
   m_ObjectHideFlags: 0
@@ -14776,7 +14798,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5340886740560161963}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.025, y: 0, z: 0}
+  m_LocalPosition: {x: -0.04, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 702619840266213878}
@@ -14824,7 +14846,7 @@ TrailRenderer:
   m_Time: 0.1
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 1
+    widthMultiplier: 2
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -15250,6 +15272,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 5340886740408246948}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &54424357255985047 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5395310821679011123, guid: fa5c0ab72a46df64ea2b248531e31c0a,
+    type: 3}
+  m_PrefabInstance: {fileID: 5340886740408246948}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &702619840266213878 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -4332866135392961710, guid: fa5c0ab72a46df64ea2b248531e31c0a,
@@ -15259,12 +15287,6 @@ Transform:
 --- !u!4 &3589572360152286118 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8921100048923664642, guid: fa5c0ab72a46df64ea2b248531e31c0a,
-    type: 3}
-  m_PrefabInstance: {fileID: 5340886740408246948}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &54424357255985047 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5395310821679011123, guid: fa5c0ab72a46df64ea2b248531e31c0a,
     type: 3}
   m_PrefabInstance: {fileID: 5340886740408246948}
   m_PrefabAsset: {fileID: 0}

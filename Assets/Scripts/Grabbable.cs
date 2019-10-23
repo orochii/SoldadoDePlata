@@ -12,8 +12,10 @@ public class Grabbable : MonoBehaviour {
     private float _drag;
     private float _angularDrag;
     private bool _useGravity;
+    private Vector3 originalPosition;
 
     void Awake() {
+        originalPosition = transform.position;
         rbody = GetComponent<Rigidbody>();
         colliders = GetComponentsInChildren<Collider>();
     }
@@ -46,5 +48,9 @@ public class Grabbable : MonoBehaviour {
 
     public void AddForce(Vector3 force) {
         rbody.AddForce(force);
+    }
+
+    public void OnFall() {
+        transform.position = originalPosition;
     }
 }

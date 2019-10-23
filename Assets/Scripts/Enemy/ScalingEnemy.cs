@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,10 +11,14 @@ public class ScalingEnemy : Enemy {
     [SerializeField] float minShootDist = 7500f;
     [SerializeField] float minShootDistToCenter = 5f;
     [SerializeField] float shootCooldown = 0.2f;
+    [SerializeField] Transform personalGround;
+    [SerializeField] GameObject teleportTrail;
+    [SerializeField] AudioSource dangerMusic;
 
     private Transform playerRef;
     private Character charRef;
     private float shootTimer;
+    private bool teleportGround;
 
     private void Awake() {
         charRef = GetComponent<Character>();
@@ -31,12 +36,32 @@ public class ScalingEnemy : Enemy {
         // Scale according to distance to player
         float distance = Vector3.Distance(playerRef.position, transform.position);
         graphics.localScale = Vector3.one * (distance * multiplier + startScale);
+        if (Grabbed) {
+            teleportGround = true;
+            return;
+        }
+        if (teleportGround) {
+            if (transform.position.y < -50) Teleport(transform.position + Vector3.up * 50f);
+            personalGround.position = transform.position - Vector3.up * 4;
+            teleportGround = false;
+            return;
+        }
         // Check if cooldown has passed
         if (Time.time < shootTimer) return;
         // Shoot if below desired distance
         if (distance < minShootDist) {
             Shoot();
         }
+    }
+
+    private void Teleport(Vector3 targetPos) {
+        // Leave trail.
+        if (teleportTrail != null) {
+            GameObject tt = Instantiate(teleportTrail, transform.position, transform.rotation);
+            Destroy(tt, 2f);
+        }
+        // Transfer itself.
+        transform.position = targetPos;
     }
 
     private void Shoot() {
@@ -51,5 +76,21 @@ public class ScalingEnemy : Enemy {
         hb.Setup(charRef, playerRef);
         // Set cooldown
         shootTimer = Time.time + shootCooldown;
+    }
+
+    private bool Grabbed {
+        get {
+            if (transform.parent != null) {
+                return transform.parent.CompareTag("Player");
+            }
+            return false;
+        }
+    }
+
+    private void OnEnable() {
+        dangerMusic.Play();
+    }
+    private void OnDisable() {
+        dangerMusic.Stop();
     }
 }

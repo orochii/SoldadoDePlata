@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class Character : MovingObject {
-    public const float minHeight = -200f;
+    public const float minHeight = -100f;
 
     public enum EDamageKind {
         NONE, PHYSICAL, MAGICAL
@@ -20,12 +20,14 @@ public class Character : MovingObject {
     [SerializeField] UnityEvent onDead;
     [SerializeField] UnityEvent onRevive;
     [SerializeField] UnityEvent onFall;
+    [SerializeField] GameObject damageParticlePrefab;
     [SerializeField] private float currHP;
     [SerializeField] private float currSP;
     [SerializeField] private bool dead;
     public bool Busy;
     public float MaxHP { get { return maxHP; } }
     public float MaxSP { get { return maxSP; } }
+    public GameObject DamageParticle { get { return damageParticlePrefab; } }
 
     public bool Dead { get { return dead; }
         set {
@@ -54,17 +56,23 @@ public class Character : MovingObject {
         set { currSP = Mathf.Clamp(value, 0, maxSP); }
     }
 
-    public void Damage(float baseDmg, EDamageKind damageKind) {
-        if (dead) return;
+    public int Damage(float baseDmg, EDamageKind damageKind) {
+        if (dead) return -2;
         bool isRecovery = baseDmg < 0;
         float damage = baseDmg;
         if (!isRecovery) {
             float def = GetDefense(damageKind);
             damage -= (def / 2);
-            if (damage <= 0) damage = 1;
+            if (damage <= 0) {
+                if (damage > -100) damage = 1;
+                else damage = 0;
+            }
         }
         // Debug.Log(name + " receives " + damage);
         HP -= damage;
+        // Return value depending on what particle to use (?).
+        if (damage == 0) return 0;
+        return (int)Mathf.Sign(damage);
     }
     
     public float GetAttack(EDamageKind damageKind) {

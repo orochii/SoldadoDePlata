@@ -21,6 +21,7 @@ public class LoadingManager : MonoBehaviour {
     private float _barWidth;
     private string currentSceneName;
     public static string CurrentSceneName { get { return m_Instance.currentSceneName; } }
+    public static bool IsLoading { get; private set; }
 
     void Awake() {
         DontDestroyOnLoad(gameObject);
@@ -67,6 +68,8 @@ public class LoadingManager : MonoBehaviour {
         // Disable player
         PlayerControl pc = FindObjectOfType<PlayerControl>();
         if (pc != null) pc.SetBusy(true);
+        // Set flag
+        IsLoading = true;
         // Obscure the screen.
         percent = 0;
         while (percent < 1) {
@@ -107,6 +110,7 @@ public class LoadingManager : MonoBehaviour {
             ChangeOverlayCol(1 - percent);
             yield return null;
         }
+        IsLoading = false;
         canvas.SetActive(false);
         yield return null;
     }

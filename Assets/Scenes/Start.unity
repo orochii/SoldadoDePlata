@@ -331,6 +331,12 @@ MonoBehaviour:
     - {fileID: 8300000, guid: f27cdd3d9a4a61248af889dc896289c1, type: 3}
     - {fileID: 8300000, guid: ff2868a0dadef0245b91e5324af43f12, type: 3}
     - {fileID: 8300000, guid: f7979f8466341d348b92cf27574249bd, type: 3}
+  - groupID: itemJingle
+    group:
+    - {fileID: 8300000, guid: 6c2790721f8e88b42bd4369374c6927d, type: 3}
+  - groupID: key
+    group:
+    - {fileID: 8300000, guid: adb06bf4dcd744e428e1e57401a5ba7f, type: 3}
 --- !u!114 &1578019906
 MonoBehaviour:
   m_ObjectHideFlags: 0

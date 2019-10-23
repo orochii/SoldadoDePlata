@@ -11,6 +11,7 @@ public class MessageManager : MonoBehaviour {
 
     [SerializeField] TextMeshProUGUI messageText;
     [SerializeField] GameObject messageWindow;
+    [SerializeField] GameObject playerHud;
     private bool finished;
     private int currentLetters;
     private string currentText = "";
@@ -24,6 +25,7 @@ public class MessageManager : MonoBehaviour {
     void Start() {
         messageText.SetText("");
         messageWindow.SetActive(false);
+        playerHud.SetActive(true);
     }
 
     private void FixedUpdate() {
@@ -46,6 +48,7 @@ public class MessageManager : MonoBehaviour {
     private void UnsetText() {
         messageText.SetText("");
         messageWindow.SetActive(false);
+        playerHud.SetActive(true);
         currentText = "";
         currentLetters = 0;
         finished = false;
@@ -56,6 +59,7 @@ public class MessageManager : MonoBehaviour {
         messageText.SetText(text);
         currentLetters = 0;
         messageWindow.SetActive(true);
+        playerHud.SetActive(false);
         wait = _wait;
         finished = false;
     }

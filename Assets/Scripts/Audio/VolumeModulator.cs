@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class VolumeModulator : MonoBehaviour {
     [SerializeField] AudioSource sound;
+    [SerializeField] float volumeMultiplier = 1;
 
 	void Awake () {
         RefreshVolume();
@@ -14,6 +15,6 @@ public class VolumeModulator : MonoBehaviour {
     }
 
     void RefreshVolume() {
-        sound.volume = AudioManager.instance.GetSfxVolume();
+        sound.volume = volumeMultiplier * AudioManager.instance.GetSfxVolume();
     }
 }

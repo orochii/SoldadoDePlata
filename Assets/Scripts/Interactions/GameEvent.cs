@@ -34,7 +34,7 @@ public class GameEvent : MonoBehaviour {
         }
         // Enable/disable pages so there is only one active.
         for (int i = 0; i < pages.Length; i++) {
-            pages[i].page.gameObject.SetActive(currentPage == i);
+            if (pages[i].page != null) pages[i].page.gameObject.SetActive(currentPage == i);
         }
     }
 

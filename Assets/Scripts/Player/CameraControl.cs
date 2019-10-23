@@ -18,6 +18,9 @@ public class CameraControl : MonoBehaviour {
     public void SetCustomTarget(Transform ct) {
         customTarget = ct;
     }
+    public void UnsetCustomTarget() {
+        customTarget = null;
+    }
     private Vector3 currentVelocity;
     private Camera cam;
     private Transform target;
